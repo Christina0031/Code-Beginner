@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}编辑页面{% endblock %}
+
+{% block css %}
+
+{% endblock %}
+{% block sidebar %}
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
+        <li class="nav-item">
+            <a href="{% url 'Hospital:dashboard' %}" class="nav-link">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                    Index Page
+                </p>
+            </a>
+        </li>
+        <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link active">
+                <i class="nav-icon fas fa-procedures"></i>
+                <p>
+                    Patients
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:list' %}" class="nav-link active">
+                        <i class="nav-icon fas fa-align-left"></i>
+                        <p>病人列表</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:filter' %}" class="nav-link">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>群体筛选</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:insert' %}" class="nav-link">
+                        <i class="nav-icon fas fa-user-plus"></i>
+                        <p>新增病人</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item has-treeview menu-close">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-clinic-medical"></i>
+                <p>
+                    Hospital
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:hospital' %}" class="nav-link">
+                        <i class="nav-icon far fas fa-address-card"></i>
+                        <p>医院信息</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:dashboard' %}">Index</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:list' %}">Patients</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:detail' adm.subject_id%}">{{ adm.subject_id }}</a></li>
+    <li class="breadcrumb-item active">Edit {{ adm.hadm_id }}</li>
+{% endblock %}
+{% block content %}
+    <!-- Main content -->
+    <div class="card card-primary">
+        <div class="card-header">
+            <h6 class="m-0">编辑问诊{{ adm.hadm_id }}（{{ adm.subject_id }}号病人）</h6>
+        </div>
+        <form role="form" action="{% url 'Hospital:do_edit_adm' %}" method="POST">{% csrf_token %}
+            <div class="card-body">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">住院日期</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="admittime" value="{{ adm.admittime }}"></div>
+                </div>
+                <div class=" form-group row">
+                    <label class="col-sm-2 col-form-label">出院日期</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="dischtime" value="{{ adm.dischtime }}"></div>
+                </div>
+                <div class=" form-group row">
+                    <label class="col-sm-2 col-form-label">入院类型</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="admission_type"
+                               value="{{ adm.admission_type }}"></div>
+                </div>
+                <div class=" form-group row">
+                    <label class="col-sm-2 col-form-label">入院地点</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="admission_location"
+                               value="{{ adm.admission_location }}"></div>
+                </div>
+                <div class=" form-group row">
+                    <label class="col-sm-2 col-form-label">出院地点</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="discharge_location"
+                               value="{{ adm.discharge_location }}"></div>
+                </div>
+                <div class=" form-group row">
+                    <label class="col-sm-2 col-form-label">保险类型</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="insurance"
+                               value="{{ adm.insurance }}"></div>
+                </div>
+                <div class=" form-group row">
+                    <label class="col-sm-2 col-form-label">进入急诊室时间</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="edregtime"
+                               value="{{ adm.edregtime }}"></div>
+                </div>
+                <div class=" form-group row">
+                    <label class="col-sm-2 col-form-label">退出急诊室时间</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="edouttime"
+                               value="{{ adm.edouttime }}"></div>
+                </div>
+                <div class=" form-group row">
+                    <label class="col-sm-2 col-form-label">诊断</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="diagnosis"
+                               value="{{ adm.diagnosis }}"></div>
+                </div>
+                <div class=" form-group row">
+                    <label class="col-sm-2 col-form-label">死亡标识符</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control"
+                               name="hospital_expire_flag" required="required"
+                               value="{{ adm.hospital_expire_flag }}"></div>
+                </div>
+                <div class=" form-group row">
+                    <label class="col-sm-2 col-form-label">存在检查</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control"
+                               name="has_chartevents_data" required="required"
+                               value="{{ adm.has_chartevents_data }}"></div>
+                </div>
+            </div>
+            <input type="hidden" name="subject_id" value="{{ adm.subject_id }}">
+            <input type="hidden" name="hadm_id" value="{{ adm.hadm_id }}">
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

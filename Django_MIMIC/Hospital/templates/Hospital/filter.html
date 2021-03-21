@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}筛选病人{% endblock %}
+
+{% block css %}
+
+{% endblock %}
+{% block sidebar %}
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
+        <li class="nav-item">
+            <a href="{% url 'Hospital:dashboard' %}" class="nav-link">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                    Index Page
+                </p>
+            </a>
+        </li>
+        <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link active">
+                <i class="nav-icon fas fa-procedures"></i>
+                <p>
+                    Patients
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:list' %}" class="nav-link">
+                        <i class="nav-icon fas fa-align-left"></i>
+                        <p>病人列表</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:filter' %}" class="nav-link active">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>群体筛选</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:insert' %}" class="nav-link">
+                        <i class="nav-icon fas fa-user-plus"></i>
+                        <p>新增病人</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item has-treeview menu-close">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-clinic-medical"></i>
+                <p>
+                    Hospital
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:hospital' %}" class="nav-link">
+                        <i class="nav-icon far fas fa-address-card"></i>
+                        <p>医院信息</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:dashboard' %}">Index</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:list' %}">Patients</a></li>
+    <li class="breadcrumb-item active">Filter</li>
+
+{% endblock %}
+
+{% block content %}
+    <!-- Main content -->
+    <div class="card card-primary card-outline">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-3 col-sm-2">
+                    <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist"
+                         aria-orientation="vertical">
+                        <a class="nav-link active" id="vert-tabs-home-tab" data-toggle="pill" href="#vert-tabs-home"
+                           role="tab" aria-controls="vert-tabs-home" aria-selected="true">Patients</a>
+                        <a class="nav-link" id="vert-tabs-profile-tab" data-toggle="pill" href="#vert-tabs-profile"
+                           role="tab" aria-controls="vert-tabs-profile" aria-selected="false">Admissions</a>
+                    </div>
+                </div>
+                <div class="col-9 col-sm-10">
+                    <div class="tab-content" id="vert-tabs-tabContent">
+                        <div class="tab-pane text-left fade show active" id="vert-tabs-home" role="tabpanel"
+                             aria-labelledby="vert-tabs-home-tab">
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h6 class="m-0">Filter</h6>
+                                </div>
+                                <form role="form" action="{% url 'Hospital:do_filter' %}" method="POST">{% csrf_token %}
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">病人ID</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="subject_id"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">性别</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="gender"></div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">出生日期</label>
+                                            <div class="col-sm-2">
+                                                <select class="custom-select" name="mode">
+                                                    <option value="con">包含</option>
+                                                    <option value="lte">小于等于</option>
+                                                    <option value="gte">大于等于</option>
+                                                </select></div>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="dob"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">死亡日期</label>
+                                            <div class="col-sm-2">
+                                                <select class="custom-select" name="mode_d">
+                                                    <option value="con">包含</option>
+                                                    <option value="lte">小于等于</option>
+                                                    <option value="gte">大于等于</option>
+                                                </select></div>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="dod"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">语言</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="language"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">宗教信仰</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="religion"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">婚姻状况</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="marital_status"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">种族</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="ethnicity"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">死亡标识符</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="expire_flag"></div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="submit" class="btn  btn-primary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="vert-tabs-profile" role="tabpanel"
+                             aria-labelledby="vert-tabs-profile-tab">
+                            <div class="card card-primary ">
+                                <div class="card-header ">
+                                    <h6 class="m-0">Filter Admission For Patient</h6>
+                                </div>
+                                <form role="form" action="{% url 'Hospital:do_filter_adm' %}"
+                                      method="POST">{% csrf_token %}
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">病人ID</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="subject_id"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">住院ID</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="hadm_id"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">住院日期</label>
+                                            <div class="col-sm-2">
+                                                <select class="custom-select" name="mode_1t">
+                                                    <option value="con">包含</option>
+                                                    <option value="lte">小于等于</option>
+                                                    <option value="gte">大于等于</option>
+                                                </select></div>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="admittime"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">出院日期</label>
+                                            <div class="col-sm-2">
+                                                <select class="custom-select" name="mode_2t">
+                                                    <option value="con">包含</option>
+                                                    <option value="lte">小于等于</option>
+                                                    <option value="gte">大于等于</option>
+                                                </select></div>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="dischtime"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">入院类型</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="admission_type"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">入院地点</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="admission_location"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">出院地点</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="discharge_location"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">保险类型</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="insurance"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">进入急诊室时间</label>
+                                            <div class="col-sm-2">
+                                                <select class="custom-select" name="mode_3t">
+                                                    <option value="con">包含</option>
+                                                    <option value="lte">小于等于</option>
+                                                    <option value="gte">大于等于</option>
+                                                </select></div>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="edregtime"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">退出急诊室时间</label>
+                                            <div class="col-sm-2">
+                                                <select class="custom-select" name="mode_4t">
+                                                    <option value="con">包含</option>
+                                                    <option value="lte">小于等于</option>
+                                                    <option value="gte">大于等于</option>
+                                                </select></div>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="edouttime"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">诊断</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="diagnosis"></div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">死亡标识符</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="hospital_expire_flag">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">存在检查</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="has_chartevents_data">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="subject_id" value="{{ patient.subject_id }}">
+                                    <div class="card-footer">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.card -->
+    </div>
+
+
+
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

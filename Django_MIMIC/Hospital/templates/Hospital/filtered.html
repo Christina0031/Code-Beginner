@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}筛选结果{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'AdminLTE-3.0.4\plugins\datatables-bs4\css' %}">
+
+{% endblock %}
+{% block sidebar %}
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
+        <li class="nav-item">
+            <a href="{% url 'Hospital:dashboard' %}" class="nav-link">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                    Index Page
+                </p>
+            </a>
+        </li>
+        <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link active">
+                <i class="nav-icon fas fa-procedures"></i>
+                <p>
+                    Patients
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:list' %}" class="nav-link">
+                        <i class="nav-icon fas fa-align-left"></i>
+                        <p>病人列表</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:filter' %}" class="nav-link active">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>群体筛选</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:insert' %}" class="nav-link">
+                        <i class="nav-icon fas fa-user-plus"></i>
+                        <p>新增病人</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item has-treeview menu-close">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-clinic-medical"></i>
+                <p>
+                    Hospital
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:hospital' %}" class="nav-link">
+                        <i class="nav-icon far fas fa-address-card"></i>
+                        <p>医院信息</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:dashboard' %}">Index</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:list' %}">Patients</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:filter' %}">Filter</a></li>
+    <li class="breadcrumb-item active">Result</li>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card card-primary card-outline">
+                <div class="card-body">
+                    <p class="card-text">共有 {{ patients | length }} 个病人</p>
+                    <div class="row">
+                        <div class="col-5">
+                            <form action="{% url 'Hospital:do_select' %}" method="POST" class="form-group">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text" name="subject_id" placeholder="Search Patient"
+                                           class="form-control">
+                                    <span class="input-group-append">
+                    <button type="button submit" class="btn  btn-outline-primary">
+                        <i class="nav-icon fas fa-user"></i>
+                    </button>
+                  </span>
+                                </div>
+                            </form>
+                            <form action="{% url 'Hospital:do_select_adm' %}" method="POST"> {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text" name="hadm_id" class="form-control"
+                                           placeholder="Search Admission">
+                                    <span class="input-group-append">
+                    <button type="button submit" class="btn  btn-outline-primary"><i
+                            class="nav-icon fas fa-plus-square"></i></button>
+                  </span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <br/>
+                    <a href="{% url 'Hospital:filter' %}">筛选病人</a>
+                    <a href="{% url 'Hospital:insert' %}">新增病人</a>
+                </div>
+            </div>
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h6 class="m-0">筛选结果</h6>
+                </div>
+                <div class="card-body">
+                    {% if not patients.count == 0 %}
+                        <table id="patients" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>病人编号</th>
+                                <th>性别</th>
+                                <th>出生日期</th>
+                                <th>死亡日期</th>
+                                <th>死亡状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for n in patients %}
+
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td class="text-green text-bold">{{ n.subject_id }}</td>
+                                    <td class="text-yellow text-bold">{{ n.gender }}</td>
+                                    <td class="text-blue text-bold">{{ n.dob }}</td>
+                                    <td class="text-red text-bold">{{ n.dod }}</td>
+                                    <td class="text-red text-bold">{{ n.expire_flag }}</td>
+                                    <td>
+                                        <a href="{% url 'Hospital:detail' n.subject_id %}">详细信息</a></br>
+                                        <a href="{% url 'Hospital:edit' n.subject_id %}">修改资料</a></br>
+                                        <a href="" data-toggle="modal"
+                                           data-target="#myModal{{ n.subject_id }}">刪除病人</a></br>
+                                    </td>
+                                </tr>
+                                <div class="modal fade" id="myModal{{ n.subject_id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">删除确认</h4>
+                                                <button type="button" class="close" data-dismiss="modal">&times;
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                您正在删除<strong>{{ n.subject_id }}</strong>号病人，全部问诊信息将被销毁</br>
+                                                <strong>删除后不可恢复</strong>，是否确认删除？
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a type="button" class="btn btn-secondary"
+                                                   href="{% url 'Hospital:delete' n.subject_id %}">删除</a>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <tr>没有数据</tr>
+                            {% endfor %}
+
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>No.</th>
+                                <th>病人编号</th>
+                                <th>性别</th>
+                                <th>出生日期</th>
+                                <th>死亡日期</th>
+                                <th>死亡状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    {% else %}
+                        <h5>未查询到符合条件的病人！</h5>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="sticky-top mb-4">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <div class="d-flex justify-content-between">
+                            <h4 class="card-title">可视化</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="main" style="width: 100%;height: 400px;float: right"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sticky-top mb-4">
+                    <div class="card card-outline">
+                        <div class="card-body">
+                            <div id="main2" style="width: 100%;height: 400px;float: right"></div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'AdminLTE-3.0.4/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+
+    <script src="{% static 'AdminLTE-3.0.4\docs\assets\plugins\bootstrap\js\bootstrap.min.js' %}"></script>
+
+    <script>
+        $(function () {
+            $('#patients').dataTable({
+                "paging": true,       <!-- 允许分页 -->
+                "lengthChange": true, <!-- 允许改变每页显示的行数 -->
+                "searching": true,    <!-- 允许内容搜索 -->
+                "ordering": true,     <!-- 允许排序 -->
+                "info": true,         <!-- 显示信息 -->
+                "autoWidth": false,    <!-- 固定宽度 -->
+            });
+        });
+    </script>
+    <script src="{% static 'echarts.js' %}"></script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            color: ['#80FF80', '#FF8096'],
+            title: {
+                text: '性别比例',
+                subtext: 'From Patients',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b} : {c}人  ({d}%)'
+            },
+            legend: {
+                // orient: 'vertical',
+                // top: 'middle',
+                bottom: 10,
+                left: 'center',
+                data: ['男性', '女性']
+            },
+            series: [
+                {
+                    type: 'pie',
+                    radius: '65%',
+                    center: ['50%', '50%'],
+                    selectedMode: 'single',
+                    data: [
+                        {value: {{ sex_m }}, name: '男性'},
+                        {value: {{ sex_f }}, name: '女性'},
+                    ],
+                    label: {
+                        show: false
+                    },
+
+                    emphasis: {
+                        label: {
+                            show: false
+                        },
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        myChart.setOption(option);
+    </script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main2'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '死亡统计',
+                subtext: 'From Patients',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b} : {c} ({d}%)'
+            },
+            legend: {
+                bottom: 10,
+                left: 'center',
+                data: ['存活', '已死亡']
+            },
+            series: [
+                {
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: ['50%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '30',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: [
+                        {value: {{ un_dead }}, name: '存活'},
+                        {value: {{ dead }}, name: '已死亡'},
+                    ]
+                }
+            ]
+
+        };
+
+        myChart.setOption(option);
+    </script>
+{% endblock %}

@@ -1,0 +1,507 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}问诊详情{% endblock %}
+
+{% block css %}
+
+{% endblock %}
+{% block sidebar %}
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
+        <li class="nav-item">
+            <a href="{% url 'Hospital:dashboard' %}" class="nav-link">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                    Index Page
+                </p>
+            </a>
+        </li>
+        <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link active">
+                <i class="nav-icon fas fa-procedures"></i>
+                <p>
+                    Patients
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:list' %}" class="nav-link active">
+                        <i class="nav-icon fas fa-align-left"></i>
+                        <p>病人列表</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:filter' %}" class="nav-link">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>群体筛选</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:insert' %}" class="nav-link">
+                        <i class="nav-icon fas fa-user-plus"></i>
+                        <p>新增病人</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item has-treeview menu-close">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-clinic-medical"></i>
+                <p>
+                    Hospital
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:hospital' %}" class="nav-link">
+                        <i class="nav-icon far fas fa-address-card"></i>
+                        <p>医院信息</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:dashboard' %}">Index</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:list' %}">Patients</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:detail' subject_id %}">{{ subject_id }}</a></li>
+    <li class="breadcrumb-item active">More {{ hadm_id }}</li>
+{% endblock %}
+{% block content %}
+    <div class="card card-primary card-outline card-outline-tabs">
+        <div class="card-header p-0 border-bottom-0">
+            <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="custom-tabs-four-home-tab" data-toggle="pill"
+                       href="#custom-tabs-four-home" role="tab" aria-controls="custom-tabs-four-home"
+                       aria-selected="true">Labevents</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="custom-tabs-four-profile-tab" data-toggle="pill"
+                       href="#custom-tabs-four-profile" role="tab" aria-controls="custom-tabs-four-profile"
+                       aria-selected="false">Prescriptions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="custom-tabs-four-messages-tab" data-toggle="pill"
+                       href="#custom-tabs-four-messages" role="tab" aria-controls="custom-tabs-four-messages"
+                       aria-selected="false">Datetimeevents</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="custom-tabs-four-settings-tab" data-toggle="pill"
+                       href="#custom-tabs-four-settings" role="tab" aria-controls="custom-tabs-four-settings"
+                       aria-selected="false">Cptevents</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content" id="custom-tabs-four-tabContent">
+                <div class="tab-pane fade show active" id="custom-tabs-four-home" role="tabpanel"
+                     aria-labelledby="custom-tabs-four-home-tab">
+                    <div class="container-fluid">
+                        <div class="row"><!-- /.col -->
+                            <div class="col-md-8">
+
+                                <div class="card card-primary card-outline">
+                                    <div class="card-body">
+                                        <!-- THE CALENDAR -->
+                                        <p>共有 {{ lab | length }} 个检查</p>
+                                        {% if not lab.count == 0 %}
+                                            <table id="lab" class="table table-bordered table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>项目ID</th>
+                                                    <th>发生日期</th>
+                                                    <th>值</th>
+                                                    <th>数字值</th>
+                                                    <th>度量单位</th>
+                                                    <th>异常标志</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for n in lab %}
+                                                    <tr>
+                                                        <td>{{ forloop.counter }}</td>
+                                                        <td>{{ n.itemid }}</td>
+                                                        <td>{{ n.charttime }}</td>
+                                                        <td>{{ n.value }}</td>
+                                                        <td>{{ n.valuenum }}</td>
+                                                        <td>{{ n.valueuom }}</td>
+                                                        <td>{{ n.flag }}</td>
+                                                    </tr>
+                                                {% empty %}
+                                                    <tr>没有数据</tr>
+                                                {% endfor %}
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>项目ID</th>
+                                                    <th>发生日期</th>
+                                                    <th>值</th>
+                                                    <th>数字值</th>
+                                                    <th>度量单位</th>
+                                                    <th>异常标志</th>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        {% endif %}
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                            <div class="col-md-4">
+                                <div class="sticky-top mb-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4 class="card-title">可视化</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- the events -->
+                                            <div id="main" style="width: 100%;height: 400px;float: right"></div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                    <!-- /.card -->
+                                </div>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="custom-tabs-four-profile" role="tabpanel"
+                     aria-labelledby="custom-tabs-four-profile-tab">
+                    <div class="card card-primary card-outline">
+                        <div class="card-body">
+                            <p>共有 {{ pre | length }} 个处方</p>
+                            {% if not pre.count == 0 %}
+                                <table id="pre1" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>ICU住院ID</th>
+                                        <th>处方开始日期</th>
+                                        <th>结束日期</th>
+                                        <th>药物名称</th>
+                                        <th>药品强度</th>
+                                        <th>剂量</th>
+                                        <th>单位</th>
+                                        <th>配方量</th>
+                                        <th>单位</th>
+                                        <th>给药途径</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for p in pre %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ p.icustay_id }}</td>
+                                            <td>{{ p.startdate }}</td>
+                                            <td>{{ p.enddate }}</td>
+                                            <td><a href="" data-toggle="modal"
+                                                   data-target="#myModal{{ p.row_id }}">{{ p.drug }}</a></td>
+                                            <td>{{ p.prod_strength }}</td>
+                                            <td>{{ p.dose_val_rx }}</td>
+                                            <td>{{ p.dose_unit_rx }}</td>
+                                            <td>{{ p.form_val_disp }}</td>
+                                            <td>{{ p.form_unit_disp }}</td>
+                                            <td>{{ p.route }}</td>
+                                        </tr>
+                                        <div class="modal fade hidden" id="myModal{{ p.row_id }}">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">药品详情</h5>
+                                                        <button type="button" class="close" data-dismiss="modal">&times;
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+
+                                                        <h6 class="m-0">
+                                                            药物种类: <strong>{{ p.drug_type }}</strong> </br>
+                                                            药物名称: <strong>{{ p.drug }}</strong> </br>
+                                                            供应商订单输入界面药物名称: <strong>{{ p.drug_name_poe }}</strong> </br>
+                                                            通用药物名称: <strong>{{ p.drug_name_generic }}</strong> </br>
+                                                            处方药编号: <strong>{{ p.formulary_drug_cd }}</strong> </br>
+                                                            通用序列号: <strong>{{ p.gsn }}</strong> </br>
+                                                            国家药品编号: <strong>{{ p.ndc }}</strong> </br> </h6>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">关闭
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    {% empty %}
+                                        <tr>没有数据</tr>
+                                    {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>ICU住院ID</th>
+                                        <th>处方开始日期</th>
+                                        <th>结束日期</th>
+                                        <th>药物名称</th>
+                                        <th>药品强度</th>
+                                        <th>剂量</th>
+                                        <th>单位</th>
+                                        <th>配方量</th>
+                                        <th>单位</th>
+                                        <th>给药途径</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="custom-tabs-four-messages" role="tabpanel"
+                     aria-labelledby="custom-tabs-four-messages-tab">
+                    <div class="card card-primary card-outline">
+                        <div class="card-body">
+                            <p>共有 {{ time | length }} 条信息</p>
+                            {% if not time.count == 0 %}
+                                <table id="time" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>ICU住院ID</th>
+                                        <th>项目ID</th>
+                                        <th>生成时间</th>
+                                        <th>结果存储时间</th>
+                                        <th>医护人员</th>
+                                        <th>值</th>
+                                        <th>单位</th>
+                                        <th>警告</th>
+                                        <th>错误</th>
+                                        <th>结果状态</th>
+                                        <th>中止</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for n in time %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ n.icustay_id }}</td>
+                                            <td>{{ n.itemid }}</td>
+                                            <td>{{ n.charttime }}</td>
+                                            <td>{{ n.storetime }}</td>
+                                            <td>{{ n.cgid }}</td>
+                                            <td>{{ n.value }}</td>
+                                            <td>{{ n.valueuom }}</td>
+                                            <td>{{ n.warning }}</td>
+                                            <td>{{ n.error }}</td>
+                                            <td>{{ n.resultstatus }}</td>
+                                            <td>{{ n.stopped }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>没有数据</tr>
+                                    {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>ICU住院ID</th>
+                                        <th>项目ID</th>
+                                        <th>生成时间</th>
+                                        <th>结果存储时间</th>
+                                        <th>医护人员ID</th>
+                                        <th>值</th>
+                                        <th>单位</th>
+                                        <th>警告</th>
+                                        <th>错误</th>
+                                        <th>结果状态</th>
+                                        <th>中止</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="custom-tabs-four-settings" role="tabpanel"
+                     aria-labelledby="custom-tabs-four-settings-tab">
+                    <div class="card card-primary card-outline">
+                        <div class="card-body">
+                            <p>共有 {{ cpt | length }} 条信息</p>
+                            {% if not cpt.count == 0 %}
+                                <table id="cpt" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>成本中心</th>
+                                        <th>发生日期</th>
+                                        <th>CPT代码</th>
+                                        <th>CPT数字</th>
+                                        <th>CPT后缀</th>
+                                        <th>事件序列号</th>
+                                        <th>代码类别</th>
+                                        <th>子代码类别</th>
+                                        <th>描述</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for n in cpt %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ n.costcenter }}</td>
+                                            <td>{{ n.chartdate }}</td>
+                                            <td>{{ n.cpt_cd }}</td>
+                                            <td>{{ n.cpt_number }}</td>
+                                            <td>{{ n.cpt_suffix }}</td>
+                                            <td>{{ n.ticket_id_seq }}</td>
+                                            <td>{{ n.sectionheader }}</td>
+                                            <td>{{ n.subsectionheader }}</td>
+                                            <td>{{ n.description }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>没有数据</tr>
+                                    {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>成本中心</th>
+                                        <th>发生日期</th>
+                                        <th>CPT代码</th>
+                                        <th>CPT数字</th>
+                                        <th>CPT后缀</th>
+                                        <th>事件序列号</th>
+                                        <th>代码类别</th>
+                                        <th>子代码类别</th>
+                                        <th>描述</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        $(function () {
+            $('#lab').dataTable({
+                "paging": true,       <!-- 允许分页 -->
+                "lengthChange": true, <!-- 允许改变每页显示的行数 -->
+                "searching": true,    <!-- 允许内容搜索 -->
+                "ordering": true,     <!-- 允许排序 -->
+                "info": true,         <!-- 显示信息 -->
+                "autoWidth": false,    <!-- 固定宽度 -->
+            });
+        });
+        $(function () {
+            $('#pre1').dataTable({
+                "paging": true,       <!-- 允许分页 -->
+                "lengthChange": true, <!-- 允许改变每页显示的行数 -->
+                "searching": true,    <!-- 允许内容搜索 -->
+                "ordering": true,     <!-- 允许排序 -->
+                "info": true,         <!-- 显示信息 -->
+                "autoWidth": false,    <!-- 固定宽度 -->
+            });
+        });
+        $(function () {
+            $('#time').dataTable({
+                "paging": true,       <!-- 允许分页 -->
+                "lengthChange": true, <!-- 允许改变每页显示的行数 -->
+                "searching": true,    <!-- 允许内容搜索 -->
+                "ordering": true,     <!-- 允许排序 -->
+                "info": true,         <!-- 显示信息 -->
+                "autoWidth": false,    <!-- 固定宽度 -->
+            });
+        });
+        $(function () {
+            $('#cpt').dataTable({
+                "paging": true,       <!-- 允许分页 -->
+                "lengthChange": true, <!-- 允许改变每页显示的行数 -->
+                "searching": true,    <!-- 允许内容搜索 -->
+                "ordering": true,     <!-- 允许排序 -->
+                "info": true,         <!-- 显示信息 -->
+                "autoWidth": false,    <!-- 固定宽度 -->
+            });
+        });
+    </script>
+
+    <script src="{% static 'echarts.js' %}"></script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: '{c}项 ({d}%)'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 10,
+                data: ['abnormal', 'None']
+            },
+            series: [
+                {
+                    name: '',
+                    type: 'pie',
+                    radius: ['50%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '30',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: [
+                        {value: {{ fa }}, name: 'abnormal'},
+                        {value: {{ fn }}, name: 'None'}
+                    ]
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+    <script src="{% static 'AdminLTE-3.0.4\plugins\datatables\jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4\plugins\datatables-fixedcolumns\js\dataTables.fixedColumns.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+
+    <script src="{% static 'AdminLTE-3.0.4\plugins\popper\popper.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4\docs\assets\plugins\bootstrap\js\bootstrap.min.js' %}"></script>
+{% endblock %}
+
+
+
+
+
+
+
+

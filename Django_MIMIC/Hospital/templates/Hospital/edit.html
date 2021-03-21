@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}编辑页面{% endblock %}
+
+{% block css %}
+
+{% endblock %}
+{% block sidebar %}
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
+        <li class="nav-item">
+            <a href="{% url 'Hospital:dashboard' %}" class="nav-link">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                    Index Page
+                </p>
+            </a>
+        </li>
+        <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link active">
+                <i class="nav-icon fas fa-procedures"></i>
+                <p>
+                    Patients
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:list' %}" class="nav-link active">
+                        <i class="nav-icon fas fa-align-left"></i>
+                        <p>病人列表</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:filter' %}" class="nav-link">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>群体筛选</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:insert' %}" class="nav-link">
+                        <i class="nav-icon fas fa-user-plus"></i>
+                        <p>新增病人</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item has-treeview menu-close">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-clinic-medical"></i>
+                <p>
+                    Hospital
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:hospital' %}" class="nav-link">
+                        <i class="nav-icon far fas fa-address-card"></i>
+                        <p>医院信息</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:dashboard' %}">Index</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:list' %}">Patients</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:detail' patient.subject_id %}">{{patient.subject_id }}</a></li>
+    <li class="breadcrumb-item active">Edit</li>
+{% endblock %}
+{% block content %}
+    <!-- Main content -->
+    <div class="card card-primary">
+        <div class="card-header">
+            <h6 class="m-0">编辑：{{ patient.subject_id }}号病人</h6>
+        </div>
+        <form role="form" action="{% url 'Hospital:do_edit' %}" method="POST">{% csrf_token %}
+            <div class="card-body">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">性别</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="gender"
+                               value="{{ patient.gender }}"></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">出生日期</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="dob" value="{{ patient.dob }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">死亡日期</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="dod" value="{{ patient.dod }}"></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">语言</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="language" value="{{ patient.language }}"></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">宗教信仰</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="religion" value="{{ patient.religion }}"></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">婚姻状况</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="marital_status"
+                               value="{{ patient.marital_status }}"></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">种族</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="ethnicity" value="{{ patient.ethnicity }}"></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">死亡标识符</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="expire_flag" value="{{ patient.expire_flag }}">
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="subject_id" value="{{ patient.subject_id }}">
+            <div class="card-footer">
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

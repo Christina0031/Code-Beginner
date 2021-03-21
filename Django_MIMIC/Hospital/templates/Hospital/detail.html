@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}详细信息{% endblock %}
+
+{% block css %}
+
+{% endblock %}
+{% block sidebar %}
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
+        <li class="nav-item">
+            <a href="{% url 'Hospital:dashboard' %}" class="nav-link">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                    Index Page
+                </p>
+            </a>
+        </li>
+        <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link active">
+                <i class="nav-icon fas fa-procedures"></i>
+                <p>
+                    Patients
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:list' %}" class="nav-link active">
+                        <i class="nav-icon fas fa-align-left"></i>
+                        <p>病人列表</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:filter' %}" class="nav-link">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>群体筛选</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:insert' %}" class="nav-link">
+                        <i class="nav-icon fas fa-user-plus"></i>
+                        <p>新增病人</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item has-treeview menu-close">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-clinic-medical"></i>
+                <p>
+                    Hospital
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:hospital' %}" class="nav-link">
+                        <i class="nav-icon far fas fa-address-card"></i>
+                        <p>医院信息</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:dashboard' %}">Index</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'Hospital:list' %}">Patients</a></li>
+    <li class="breadcrumb-item active">{{ detail.subject_id }}</li>
+
+{% endblock %}
+
+{% block content %}
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h6 class="m-0">详细信息</h6>
+        </div>
+        <div class="card-body">
+            <table id="patient" class="table table-bordered table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>病人ID</th>
+                    <th>性别</th>
+                    <th>出生日期</th>
+                    <th>死亡日期</th>
+                    <th>语言</th>
+                    <th>宗教信仰</th>
+                    <th>婚姻状况</th>
+                    <th>种族</th>
+                    <th>死亡标识符</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{ detail.subject_id }}</td>
+                    <td>{{ detail.gender }}</td>
+                    <td>{{ detail.dob }}</td>
+                    <td>{{ detail.dod }}</td>
+                    <td>{{ detail.language }}</td>
+                    <td>{{ detail.religion }}</td>
+                    <td>{{ detail.marital_status }}</td>
+                    <td>{{ detail.ethnicity }}</td>
+                    <td>{{ detail.expire_flag }}</td>
+                    <td><a class="nav-icon fas fa-user-edit"  href="{% url 'Hospital:edit' detail.subject_id %}"></a>
+             <a class="nav-icon fas fa-user-minus" href="" data-toggle="modal" data-target="#myModal{{ detail.subject_id }}"></a>
+</td>
+                </tr>
+                </tbody>
+            </table>
+
+                    <div class="modal fade" id="myModal{{ detail.subject_id }}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">删除确认</h5>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    您正在删除<strong>{{ detail.subject_id }}</strong>号病人，其全部存储信息将被销毁</br>
+                                    <strong>删除后不可恢复</strong>，是否确认删除？
+                                </div>
+                                <div class="modal-footer">
+                                    <a type="button" class="btn btn-secondary"
+                                       href="{% url 'Hospital:delete' detail.subject_id %}">删除</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        </div>
+    </div>
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h6 class="m-0">问诊资料：{{ detail.subject_id }}号病人</h6>
+        </div>
+        <div class="card-body">
+            <p>共有{{ adm | length }} 条问诊记录</p>
+            <a href="{% url 'Hospital:adm_insert' detail.subject_id %}">新增问诊</a></br></br>
+            {% if not adm.count == 0 %}
+            <table id="adm" class="table table-bordered table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>问诊编号</th>
+                    <th>住院日期</th>
+                    <th>出院日期</th>
+                    <th>死亡日期</th>
+                    <th>诊断</th>
+                    <th>检查</th>
+
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for n in adm %}
+                    <tr>
+                        <td><a href="" data-toggle="modal" data-target="#myModalDetail{{ n.hadm_id }}">{{ n.hadm_id }}</a></td>
+                        <td>{{ n.admittime }}</td>
+                        <td>{{ n.dischtime }}</td>
+                        <td>{{ n.deathtime }}</td>
+                        <td>{{ n.diagnosis }}</td>
+                        <td>{{ n.has_chartevents_data }}</td>
+                        <td>
+                            <a class="nav-icon fas fa-file-medical-alt" href="{% url 'Hospital:moreinfo' n.subject_id n.hadm_id %}"></a>
+                            <a class="nav-icon fas fa-pencil-alt" href="{% url 'Hospital:edit_adm' n.subject_id n.hadm_id %}"></a>
+                            <a class="nav-icon fas fa-times" href="" data-toggle="modal" data-target="#myModal{{ n.hadm_id }}"></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <div class="modal fade" id="myModal{{ n.hadm_id }}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">删除确认</h5>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    您正在删除<strong>{{ n.subject_id }}</strong>号病人的<strong>{{ n.hadm_id }}</strong>号问诊</br>
+                                    <strong>删除后不可恢复</strong>，是否确认删除？
+                                </div>
+                                <div class="modal-footer">
+                                    <a type="button" class="btn btn-secondary"
+                                       href="{% url 'Hospital:adm_delete' n.subject_id n.hadm_id %}">删除</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="myModalDetail{{ n.hadm_id }}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">问诊信息</h5>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <h6 class="m-0">
+                                        入院类型: <strong>{{ n.admission_type }}</strong> </br>
+                                        入院地点: <strong>{{ n.admission_location }}</strong> </br>
+                                        出院地点: <strong>{{ n.discharge_location }}</strong> </br>
+                                        保险类型: <strong>{{ n.insurance }}</strong> </br>
+                                        进入急诊室时间: <strong>{{ n.edregtime }}</strong> </br>
+                                        退出急诊室时间: <strong>{{ n.edouttime }}</strong> </br>
+                                        死亡标识符: <strong>{{ n.hospital_expire_flag }}</strong> </br>
+                                        </h6>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <tr>没有数据</tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        </div>
+        <!-- /.card-body -->
+    </div>
+
+
+
+
+    </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'AdminLTE-3.0.4/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+
+    <script src="{% static 'AdminLTE-3.0.4\plugins\popper\popper.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4\docs\assets\plugins\bootstrap\js\bootstrap.min.js' %}"></script>
+
+    <script>
+        $(function () {
+            $('#patient').dataTable({
+                "searching": false, //去掉搜索框方法一
+                "bFilter": false,   //去掉搜索框方法二
+                "bSort": false,  //禁止排序
+                "paging": false,   //禁止分页
+                "info": false   //去掉底部文字
+            });
+        });
+        $(function () {
+            $('#adm').dataTable({
+                "searching": false, //去掉搜索框方法一
+                "bFilter": false,   //去掉搜索框方法二
+                "bSort": false,  //禁止排序
+                "paging": false,   //禁止分页
+                "info": false   //去掉底部文字
+            });
+        });
+    </script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+

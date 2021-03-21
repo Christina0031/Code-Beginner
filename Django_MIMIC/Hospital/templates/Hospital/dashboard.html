@@ -1,0 +1,498 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}MIMIC Hospital{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'AdminLTE-3.0.4\plugins\fontawesome-free\css\all.min.css' %}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Tempusdominus Bbootstrap 4 -->
+    <link rel="stylesheet"
+          href="{% static 'AdminLTE-3.0.4\plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="{% static 'AdminLTE-3.0.4\plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+    <!-- JQVMap -->
+    <link rel="stylesheet" href="{% static 'AdminLTE-3.0.4\plugins/jqvmap/jqvmap.min.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'AdminLTE-3.0.4\dist/css/adminlte.min.css' %}">
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="{% static 'AdminLTE-3.0.4\plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="{% static 'AdminLTE-3.0.4\plugins/daterangepicker/daterangepicker.css' %}">
+    <!-- summernote -->
+    <link rel="stylesheet" href="{% static 'AdminLTE-3.0.4\plugins/summernote/summernote-bs4.css' %}">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+{% endblock %}
+
+{% block sidebar %}
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
+        <li class="nav-item">
+            <a href="{% url 'Hospital:dashboard' %}" class="nav-link active">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                    Index Page
+                </p>
+            </a>
+        </li>
+        <li class="nav-item has-treeview menu-close">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-procedures"></i>
+                <p>
+                    Patients
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:list' %}" class="nav-link">
+                        <i class="nav-icon fas fa-align-left"></i>
+                        <p>病人列表</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:filter' %}" class="nav-link">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>群体筛选</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:insert' %}" class="nav-link">
+                        <i class="nav-icon fas fa-user-plus"></i>
+                        <p>新增病人</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item has-treeview menu-close">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-clinic-medical"></i>
+                <p>
+                    Hospital
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'Hospital:hospital' %}" class="nav-link">
+                        <i class="nav-icon far fas fa-address-card"></i>
+                        <p>医院信息</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}
+
+
+
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Index</li>
+{% endblock %}
+
+{% block content %}
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>{{ n_pat }}</h3>
+                            <p>Patients</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-heart"></i>
+                        </div>
+                        <a href="{% url 'Hospital:list' %}" class="small-box-footer">More info <i
+                                class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3>{{ n_cg }}</h3>
+                            <p>Caregivers</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-stats-bars"></i>
+                        </div>
+                        <a href="{% url 'Hospital:hospital' %}" class="small-box-footer">More info <i
+                                class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3>Insert</h3>
+
+                            <p>New Patient</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-person-add"></i>
+                        </div>
+                        <a href="{% url 'Hospital:insert' %}" class="small-box-footer">More info <i
+                                class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <h3>Filter</h3>
+
+                            <p>Visualizing Data</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-pie-graph"></i>
+                        </div>
+                        <a href="{% url 'Hospital:filter' %}" class="small-box-footer">More info <i
+                                class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="m-0">Admissions Report</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div id="main3" style="width: 100%;height:400px;"></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="text-center">
+                                        <strong>Latest Admissions</strong>
+                                    </p>
+                                    <div class="table-responsive">
+                                        <table class="table m-0">
+                                            <thead>
+                                            <tr>
+                                                <th>病人ID</th>
+                                                <th>住院时间</th>
+                                                <th>是否逝世</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for n in admlist %}
+                                                <tr>
+                                                    <td>
+                                                        <a href="{% url 'Hospital:detail' n.subject_id %}">{{ n.subject_id }}</a>
+                                                    </td>
+                                                    <td>{{ n.admittime }}</td>
+                                                    {% if n.hospital_expire_flag == 0 %}
+                                                        <td><span class="badge badge-success">0</span></td>
+                                                    {% else %}
+                                                        <td><span class="badge badge-danger">1</span></td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <a href="" data-toggle="modal" data-target="#myModal"
+                                       class="btn btn-block btn-outline-primary">Insert</a>
+                                    <div class="modal fade" id="myModal">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">新增问诊</h5>
+                                                    <button type="button" class="close" data-dismiss="modal">&times;
+                                                    </button>
+                                                </div>
+                                                <form action="{% url 'Hospital:form_insert_adm' %}" method="POST">
+                                                    <div class="modal-body">
+                                                        {% csrf_token %}
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label">病人ID</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control"
+                                                                       name="subject_id"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="submit" class="btn btn-secondary" value="提交">
+                                                </form>
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">关闭
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.card -->
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <div class="d-flex justify-content-between">
+                            <h3 class="card-title">Gender</h3>
+                            <a href="{% url 'Hospital:list' %}">View List</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div id="main" style="width: 400px;height:400px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <div class="d-flex justify-content-between">
+                            <h3 class="card-title">Dead</h3>
+                            <a href="{% url 'Hospital:list' %}">View List</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div id="main2" style="width: 400px;height:400px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="info-box mb-3 bg-warning">
+                    <span class="info-box-icon"><i class="fas fa-tag"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Admissions</span>
+                        <span class="info-box-number">{{ n_adm }}</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+                <div class="info-box mb-3 bg-success">
+                    <span class="info-box-icon"><i class="far fa-heart"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">LabEvents</span>
+                        <span class="info-box-number">{{ lab }}</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+                <div class="info-box mb-3 bg-danger">
+                    <span class="info-box-icon"><i class="fas fa-pills"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Prescriptions</span>
+                        <span class="info-box-number">{{ pre }}</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+                <div class="info-box mb-3 bg-info">
+                    <span class="info-box-icon"><i class="far fa-save"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Cptevents</span>
+                        <span class="info-box-number">{{ cpt }}</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+
+            </div>
+            <!-- /.col-md-6 -->
+        </div>
+        <!-- /.row -->
+        </div>
+    </section>
+{% endblock %}
+
+{% block script %}
+
+    <script src="{% static 'AdminLTE-3.0.4\plugins\datatables\jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'AdminLTE-3.0.4\plugins\datatables-bs4\js\dataTables.bootstrap4.min.js' %}"></script>
+
+    <script src="{% static 'echarts.js' %}"></script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            color: ['#80FF80', '#FF8096'],
+            title: {
+                text: '性别比例',
+                subtext: 'From Patients',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b} : {c}人  ({d}%)'
+            },
+            legend: {
+                // orient: 'vertical',
+                // top: 'middle',
+                bottom: 10,
+                left: 'center',
+                data: ['男性', '女性']
+            },
+            series: [
+                {
+                    type: 'pie',
+                    radius: '65%',
+                    center: ['50%', '50%'],
+                    selectedMode: 'single',
+                    data: [
+                        {value: {{ sex_m }}, name: '男性'},
+                        {value: {{ sex_f }}, name: '女性'},
+                    ],
+                    label: {
+                        show: false
+                    },
+
+                    emphasis: {
+                        label: {
+                            show: false
+                        },
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        myChart.setOption(option);
+    </script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main2'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '死亡统计',
+                subtext: 'From Patients',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b} : {c} ({d}%)'
+            },
+            legend: {
+                bottom: 10,
+                left: 'center',
+                data: ['存活', '已死亡']
+            },
+            series: [
+                {
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: ['50%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '30',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: [
+                        {value: {{ un_dead }}, name: '存活'},
+                        {value: {{ dead }}, name: '已死亡'},
+                    ]
+                }
+            ]
+
+        };
+
+        myChart.setOption(option);
+    </script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main3'));
+
+        // 指定图表的配置项和数据
+        var xAxisData = ['2100s', '2110s', '2120s', '2130s', '2140s', '2150s', '2160s', '2170s', '2180s', '2190s', '2200s'];
+        var data1 = [{{time0}}, {{ time1 }}, {{ time2 }}, {{ time3 }}, {{ time4 }}, {{ time5 }}, {{ time6 }}, {{ time7 }}, {{ time8 }}, {{ time9 }}, {{ time10}}];
+
+        option = {
+            title: {
+                text: '就诊人数统计'
+            },
+            legend: {
+                orient: 'vertical',
+                right: 10,
+                data: ['就诊人数']
+            },
+            tooltip: {},
+            xAxis: {
+                data: xAxisData,
+                splitLine: {
+                    show: false
+                }
+            },
+            yAxis: {},
+            series: [{
+                name: '就诊人数',
+                type: 'bar',
+                itemStyle: {
+                    color: new echarts.graphic.LinearGradient(
+                        0, 0, 0, 1,
+                        [
+                            {offset: 0, color: '#83bff6'},
+                            {offset: 0.5, color: '#188df0'},
+                            {offset: 1, color: '#188df0'}
+                        ]
+                    )
+                },
+                emphasis: {
+                    itemStyle: {
+                        color: new echarts.graphic.LinearGradient(
+                            0, 0, 0, 1,
+                            [
+                                {offset: 0, color: '#2378f7'},
+                                {offset: 0.7, color: '#2378f7'},
+                                {offset: 1, color: '#83bff6'}
+                            ]
+                        )
+                    }
+                },
+                data: data1,
+                animationDelay: function (idx) {
+                    return idx * 30;
+                }
+            },],
+            animationEasing: 'elasticOut',
+            animationDelayUpdate: function (idx) {
+                return idx * 50;
+            }
+        };
+        myChart.setOption(option);
+    </script>
+
+{% endblock %}
+
