@@ -1,2 +1,2 @@
 # Code-Beginner
-My Course Project
+My Project
