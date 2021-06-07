@@ -1103,7 +1103,8 @@ function showEchartsTree(tree_container,tree_data){
 		                        formatter: "{b}",
 		                        textStyle: {
 		                            color: '#000',
-		                            fontSize: 5
+									fontSize: 15
+		                            // fontSize: 20  #TODO
 		                        }
 		                    },
 		                    lineStyle: {

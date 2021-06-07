@@ -1,5 +1,4 @@
 <html xmlns="http://www.cc98.org" xml:lang="en">
-
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <title>成分句法分析可视化-ZJU</title>
@@ -8,9 +7,44 @@
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css" />
 
+    <!--格式修改*/-->
+    <style>
+        body/*body不包含标题，标题需要单独指定*/ {
+            font-family:cursive;
+            font-size: 16px;/*Google默认16px*/
+            /*  */
+        
+            background-image: 
+            url("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fm4.biz.itc.cn%2Fpic%2Fnew%2Fn%2F03%2F93%2FImg7379303_n.jpg&refer=http%3A%2F%2Fm4.biz.itc.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1625649219&t=3223e06babf1911fa26f82832341eef9");
+            background-repeat: no-repeat;
+            background-position: Right top;
+            background-size:60px 45px;
+            /* background-attachment: fixed;    */
+    }
+        h4 {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+        .strenth{
+            font-weight: bold;
+            /* bold=700 normal=400 */
+        }
+        .italic{
+            font-style: oblique;
+            /* Italic 样式一般是指书写体，相比无样式的字体，
+            通常会占用较少的高度，
+            而 oblique 字形一般只是常规字形的倾斜版本。 */
+        }
+        .combination{
+            /* 次序不可混乱：font-style font-weight font-size/line-height font-family */
+            /* 至少必须有size and family */
+            font: italic 700 25px 'Microsoft yahei';
+        }
+        
+}
+    </style>
 </head>
 
-<body style="background-color: #EEEEEE">
+<body style="background-color: #f1fcfc">
     <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/myjs/TagParseTree.js"></script>
@@ -34,7 +68,7 @@
     </div>
 
     <center>
-        <div id="bpres_tree_container" style="width:80%;height:610px;border:2px solid #F00"></div>
+        <div id="bpres_tree_container" style="width:80%;height:610px;border:2px solid rgb(135, 114, 226)"></div>
     </center>
 
     <script>
